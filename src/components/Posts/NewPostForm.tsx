@@ -89,7 +89,7 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
                     />
                 )}
                 {selectedTab === 'Images & Video' && (
-                    <ImageUpload selectedFile={selectedFile} onSelectImage={onSelectImage} setSelectedTab={setSelectedTab} setSelectedFile={setSelectedFile}/>
+                    <ImageUpload selectedFile={selectedFile} onSelectImage={onSelectImage} setSelectedTab={setSelectedTab} setSelectedFile={setSelectedFile} />
                 )}
             </Flex>
         </Flex>
