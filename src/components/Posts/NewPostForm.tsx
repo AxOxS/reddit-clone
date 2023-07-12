@@ -1,4 +1,4 @@
-import { Flex, Icon } from '@chakra-ui/react';
+import { Alert, AlertIcon, Flex, Icon, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { BsLink45Deg, BsMic } from 'react-icons/bs';
 import { BiPoll } from 'react-icons/bi';
@@ -9,7 +9,9 @@ import ImageUpload from './PostForm/ImageUpload';
 import { Post } from '@/atoms/postsAtom';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
-import { Timestamp, serverTimestamp } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { firestore, storage } from '@/firebase/clientApp';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 
 type NewPostFormProps = {
     user: User;
@@ -52,6 +54,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     });
     const [selectedFile, setSelectedFile] = useState<string>();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     const handleCreatePost = async () => {
 
@@ -67,6 +70,27 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
             voteStatus: 0,
             createdAt: serverTimestamp() as Timestamp,
         };
+
+        setLoading(true);
+        try {
+            const postDocRef = await addDoc(collection(firestore, 'posts'), newPost);
+
+            if (selectedFile) {
+                const imageRef = ref(storage, `posts/${postDocRef.id}/image`);
+                await uploadString(imageRef, selectedFile, 'data_url');
+                const downloadURL = await getDownloadURL(imageRef);
+
+                await updateDoc(postDocRef, {
+                    imageURL: downloadURL,
+                });
+            }
+            router.back();
+
+        } catch (error: any) {
+            console.log('handleCreatePost error', error.message);
+            setError(true);
+        }
+        setLoading(false);
     };
 
     const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +137,12 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
                     <ImageUpload selectedFile={selectedFile} onSelectImage={onSelectImage} setSelectedTab={setSelectedTab} setSelectedFile={setSelectedFile} />
                 )}
             </Flex>
+            {error && (
+                <Alert status='error'>
+                    <AlertIcon />
+                    <Text mr={2}>Error creating post</Text>
+                </Alert>
+            )}
         </Flex>
     );
 };
