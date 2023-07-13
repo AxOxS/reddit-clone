@@ -7,18 +7,20 @@ import React, { useEffect, useState } from 'react';
 import PostItem from './PostItem';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Stack } from '@chakra-ui/react';
+import PostLoader from './PostLoader';
 
 type PostsProps = {
     communityData: Community;
 };
 
 const Posts: React.FC<PostsProps> = ({ communityData }) => {
-    const [user] =useAuthState(auth);
+    const [user] = useAuthState(auth);
     const [loading, setLoading] = useState(false);
     const { postStateValue, setPostStateValue, onVote, onDeletePost, onSelectPost } = usePosts();
 
     const getPosts = async () => {
         try {
+            setLoading(true);
             const postQuery = query(
                 collection(firestore, 'posts'),
                 where('communityId', '==', communityData.id),
@@ -36,6 +38,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
         } catch (error: any) {
             console.log('getPosts error', error.message);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -43,19 +46,26 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
     }, []);
 
     return (
-        <Stack>
-            {postStateValue.posts.map((item) => (
-                <PostItem
-                    post={item}
-                    userIsCreator={user?.uid === item.creatorId}
-                    userVoteValue={undefined}
-                    onVote={onVote}
-                    onSelectPost={onSelectPost}
-                    onDeletePost={onDeletePost}
+        <>
+            {loading ? (
+                <PostLoader />
+            ) : (
+                <Stack>
+                    {postStateValue.posts.map((item) => (
+                        <PostItem
+                            key={item.id}
+                            post={item}
+                            userIsCreator={user?.uid === item.creatorId}
+                            userVoteValue={undefined}
+                            onVote={onVote}
+                            onSelectPost={onSelectPost}
+                            onDeletePost={onDeletePost}
 
-                />
-            ))}
-        </Stack>
+                        />
+                    ))}
+                </Stack>
+            )}
+        </>
     );
 };
 export default Posts;
