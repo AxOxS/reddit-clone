@@ -17,7 +17,7 @@ const useCommunityData = () => {
 
     const onJoinOrLeaveCommunity = (communityData: Community, isJoined: boolean) => {
 
-        if(!user) {
+        if (!user) {
             setAuthModalState({ open: true, view: 'login' });
             return;
         }
@@ -101,7 +101,13 @@ const useCommunityData = () => {
     };
 
     useEffect(() => {
-        if (!user) return;
+        if (!user) {
+            setCommunityStateValue((prev) => ({
+                ...prev,
+                mySnippets: [],
+            }));
+            return;
+        };
         getMySnippets();
     }, [user]);
 
