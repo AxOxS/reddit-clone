@@ -5,7 +5,7 @@ type PageContentProps = {
     maxWidth?: string;
 };
 
-const PageContent: React.FC<PageContentProps> = ({ children, maxWidth, }) => {
+const PageContent: React.FC<PageContentProps> = ({ children, maxWidth, }: any) => {
 
     return (
         <Flex justify="center" p="16px 0px">
