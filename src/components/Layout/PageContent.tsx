@@ -3,9 +3,10 @@ import React from 'react';
 
 type PageContentProps = {
     maxWidth?: string;
+    children: React.ReactNode;
 };
 
-const PageContent: React.FC<PageContentProps> = ({ children, maxWidth, }: any) => {
+const PageContent: React.FC<PageContentProps> = ({ children, maxWidth, }) => {
 
     return (
         <Flex justify="center" p="16px 0px">
