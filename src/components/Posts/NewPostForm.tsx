@@ -19,7 +19,7 @@ type NewPostFormProps = {
     communityImageURL?: string;
 };
 
-const formTabs: TabItem[] = [
+const formTabs = [
     {
         title: 'Post',
         icon: IoDocumentText,
@@ -42,7 +42,7 @@ const formTabs: TabItem[] = [
     },
 ];
 
-export type TabItem = {
+export type TabItems = {
     title: string,
     icon: typeof Icon.arguments;
 }
