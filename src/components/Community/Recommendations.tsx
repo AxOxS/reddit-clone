@@ -132,15 +132,17 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                                                         overflow: "hidden",
                                                         textOverflow: "ellipsis",
                                                     }}
-                                                >{`r/${item.id}`}</span>
+                                                >{`r/${item.id}`}
+                                                </span>
                                             </Flex>
                                         </Flex>
                                         <Box position="absolute" right="10px">
                                             <Button
                                                 height="22px"
                                                 fontSize="8pt"
-                                                onClick={(event) => {
+                                                onClick={event => {
                                                     event.stopPropagation();
+                                                    event.preventDefault();
                                                     onJoinOrLeaveCommunity(item, isJoined);
                                                 }}
                                                 variant={isJoined ? "outline" : "solid"}
